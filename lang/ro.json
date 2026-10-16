@@ -1,0 +1,9 @@
+{
+  "Prefix": "{Lime}[CS2-Tags] {Default}",
+  "menu.Title": "Taguri",
+  "menu.Disable": "Dezactivează",
+  "menu.Selected": "{0} <--",
+  "tag.Disabled": " {0}Tagul tău a fost dezactivat.",
+  "tag.Set": " {0}Tag setat la {1}.",
+  "console.Reloaded": "{0}Configurațiile de taguri au fost reîncărcate!"
+}

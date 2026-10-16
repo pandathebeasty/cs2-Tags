@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>CS2_Tags</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.374" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="MySqlConnector" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Shared ChatManager API. Private=false: the DLL ships once in addons/counterstrikesharp/shared,
+         not next to this plugin. -->
+    <Reference Include="ChatManagerApi">
+      <HintPath>3rd_party\ChatManagerApi.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- PlayerSettings API (NickFox007) for persistent per-player tag choice. Soft dependency:
+         if the PlayerSettings core plugin is missing, the choice falls back to in-memory. -->
+    <Reference Include="PlayerSettingsApi">
+      <HintPath>3rd_party\PlayerSettingsApi.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="lang\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

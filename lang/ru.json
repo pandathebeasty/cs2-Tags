@@ -1,0 +1,9 @@
+{
+  "Prefix": "{Lime}[CS2-Tags] {Default}",
+  "menu.Title": "Теги",
+  "menu.Disable": "Отключить",
+  "menu.Selected": "{0} <--",
+  "tag.Disabled": " {0}Ваш тег отключён.",
+  "tag.Set": " {0}Тег установлен на {1}.",
+  "console.Reloaded": "{0}Конфигурация тегов перезагружена!"
+}

@@ -1,0 +1,9 @@
+{
+  "Prefix": "{Lime}[CS2-Tags] {Default}",
+  "menu.Title": "Tags",
+  "menu.Disable": "Disable",
+  "menu.Selected": "{0} <--",
+  "tag.Disabled": " {0}Your tag was disabled.",
+  "tag.Set": " {0}Tag set to {1}.",
+  "console.Reloaded": "{0}Tag configs reloaded!"
+}
