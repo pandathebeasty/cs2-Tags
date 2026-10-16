@@ -5,7 +5,8 @@ public enum TagKind
 {
     SteamId,
     Group,
-    Permission
+    Permission,
+    Everyone
 }
 
 /// <summary>

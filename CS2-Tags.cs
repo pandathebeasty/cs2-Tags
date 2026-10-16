@@ -176,13 +176,27 @@ public class CS2_Tags : BasePlugin
 
         return new ChatTag
         {
-            ChatPrefix = def.Prefix,
-            ScoreboardTag = def.Scoreboard,
+            ChatPrefix = ApplyVariables(def.Prefix, player),
+            ScoreboardTag = ApplyVariables(def.Scoreboard, player),
             NameColor = StripBraces(def.NickColor),
             MessageColor = StripBraces(def.MessageColor),
             Order = TagOrder,
             ColorPriority = TagColorPriority
         };
+    }
+
+    /// <summary>
+    /// Replaces per-player variables inside a tag field. Currently supports {userid} (the player's
+    /// in-game user id), like CS2UserIDTags. Case-insensitive.
+    /// </summary>
+    private static string ApplyVariables(string text, CCSPlayerController player)
+    {
+        if (string.IsNullOrEmpty(text) || text.IndexOf("{userid}", StringComparison.OrdinalIgnoreCase) < 0)
+            return text;
+
+        var userId = player.UserId?.ToString() ?? "0";
+        return System.Text.RegularExpressions.Regex.Replace(
+            text, "\\{userid\\}", userId, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     }
 
     // --- Availability -------------------------------------------------------------------------
@@ -196,6 +210,7 @@ public class CS2_Tags : BasePlugin
         var steamid = player.AuthorizedSteamID?.SteamId64.ToString() ?? player.SteamID.ToString();
         return def.Kind switch
         {
+            TagKind.Everyone => true,
             TagKind.SteamId => def.Owner == steamid,
             TagKind.Group => AdminManager.PlayerInGroup(player, def.Owner),
             TagKind.Permission => AdminManager.PlayerHasPermissions(player, def.Owner),

@@ -63,9 +63,16 @@ like `{red}`, `{gold}`, `{teamcolor}` and are resolved by ChatManager.
 {
   "#css/admin":        { "prefix": "{green}[ADMIN]", "nick_color": "{red}",  "message_color": "{gold}", "scoreboard": "[ADMIN]" },
   "@css/chat":         { "prefix": "{green}[VIP]",   "nick_color": "{lime}", "message_color": "{white}","scoreboard": "[VIP]" },
-  "76561198202892670": { "prefix": "{gold}[OWNER]",  "nick_color": "{gold}", "message_color": "{white}","scoreboard": "[OWNER]" }
+  "76561198202892670": { "prefix": "{gold}[OWNER]",  "nick_color": "{gold}", "message_color": "{white}","scoreboard": "[OWNER]" },
+  "everyone":          { "prefix": "",               "nick_color": "",       "message_color": "",       "scoreboard": "#{userid}" }
 }
 ```
+
+### Special keys & variables
+- **`everyone`** — a tag applied to all players (bots excluded). Define it in `admin_tags.jsonc`.
+- **`{userid}`** — a per-player variable, replaced in the prefix and scoreboard with the player's
+  in-game user id (inspired by [CS2UserIDTags](https://github.com/criskkky/CS2UserIDTags)). Useful
+  for showing an id next to the name, e.g. `"scoreboard": "#{userid}"`.
 
 ### Colors
 `default, white, darkred, green, lightyellow, lightblue, olive, lime, red, lightpurple, purple,

@@ -114,11 +114,12 @@ public sealed class TagStore
             var key = prop.Name;
             var kind = key.StartsWith('#') ? TagKind.Group
                      : key.StartsWith('@') ? TagKind.Permission
+                     : string.Equals(key, "everyone", StringComparison.OrdinalIgnoreCase) ? TagKind.Everyone
                      : TagKind.SteamId;
 
             if (kind == TagKind.SteamId)
             {
-                _logger.LogWarning("[CS2-Tags] '{Key}' in admin_tags.jsonc is not a #group/@permission - ignored.", key);
+                _logger.LogWarning("[CS2-Tags] '{Key}' in admin_tags.jsonc is not a #group/@permission/everyone - ignored.", key);
                 continue;
             }
 
@@ -454,7 +455,10 @@ public sealed class TagStore
             list.Add(new TagDef
             {
                 Owner = key,
-                Kind = key.StartsWith('@') ? TagKind.Permission : TagKind.Group,
+                Kind = key.StartsWith('@') ? TagKind.Permission
+                     : key.StartsWith('#') ? TagKind.Group
+                     : string.Equals(key, "everyone", StringComparison.OrdinalIgnoreCase) ? TagKind.Everyone
+                     : TagKind.Group,
                 Name = (string)r.name,
                 Prefix = (string)r.prefix,
                 NickColor = (string)r.nick_color,
@@ -673,6 +677,15 @@ public sealed class TagStore
             sb.AppendLine("      \"nick_color\": \"{red}\",");
             sb.AppendLine("      \"message_color\": \"{gold}\",");
             sb.AppendLine("      \"scoreboard\": \"[CHAT]\"");
+            sb.AppendLine("    },");
+            sb.AppendLine("    // \"everyone\" applies to all players (bots excluded).");
+            sb.AppendLine("    // {userid} is replaced with the player's in-game user id.");
+            sb.AppendLine("    \"everyone\": {");
+            sb.AppendLine("      \"name\": \"Player\",");
+            sb.AppendLine("      \"prefix\": \"\",");
+            sb.AppendLine("      \"nick_color\": \"\",");
+            sb.AppendLine("      \"message_color\": \"\",");
+            sb.AppendLine("      \"scoreboard\": \"#{userid}\"");
             sb.AppendLine("    }");
             sb.AppendLine("  }");
             sb.AppendLine("}");
