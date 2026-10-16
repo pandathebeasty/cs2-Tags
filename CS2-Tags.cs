@@ -30,7 +30,7 @@ public class CS2_Tags : BasePlugin
     public override string ModuleName => "CS2-Tags";
     public override string ModuleDescription => "Selectable player tags with MySQL sync";
     public override string ModuleAuthor => " daffy & panda";
-    public override string ModuleVersion => "1.0.0";
+    public override string ModuleVersion => "1.0.1";
 
     private const int TagOrder = 20;          // after VIP (10)
     private const int TagColorPriority = 100; // admin wins colours over VIP (50)
