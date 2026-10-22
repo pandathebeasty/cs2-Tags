@@ -6,7 +6,7 @@ on:
 env:
   PROJECT_NAME: "CS2-Tags"
   PROJECT_PATH: "./CS2-Tags.csproj"
-  OUTPUT_PATH: "./counterstrikesharp/plugins"
+  OUTPUT_PATH: "./counterstrikesharp"
   TMP_PATH: "./tmp"
 
 jobs:
@@ -70,7 +70,8 @@ jobs:
     permissions: write-all
 
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
         with:
           name: Build-Artifacts
           path: .
@@ -87,7 +88,7 @@ jobs:
 
             Extract the archive into:
 
-            addons/counterstrikesharp/plugins/
+            addons/counterstrikesharp/plugins
 
             The plugin will be loaded automatically by CounterStrikeSharp.
 
