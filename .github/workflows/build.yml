@@ -1,0 +1,106 @@
+name: Build and Publish
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**/README.md"
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "**/README.md"
+
+env:
+  PROJECT_NAME: "CS2-Tags"
+  PROJECT_PATH: "./CS2-Tags.csproj"
+  OUTPUT_PATH: "./counterstrikesharp/plugins"
+  TMP_PATH: "./tmp"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    outputs:
+      build_version: ${{ steps.version.outputs.VERSION }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Generate Version
+        id: version
+        run: echo "VERSION=${{ github.run_number }}" >> $GITHUB_OUTPUT
+
+      - name: Restore
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: Build
+        run: |
+          dotnet build ${{ env.PROJECT_PATH }} \
+            -c Release \
+            -o ${{ env.TMP_PATH }}
+
+      - name: Package Plugin
+        run: |
+          mkdir -p ${{ env.OUTPUT_PATH }}/plugins/${{ env.PROJECT_NAME }}
+
+          cp -r ${{ env.TMP_PATH }}/* \
+            ${{ env.OUTPUT_PATH }}/plugins/${{ env.PROJECT_NAME }}/
+
+          if [ -d "lang" ]; then
+            cp -r lang \
+              ${{ env.OUTPUT_PATH }}/plugins/${{ env.PROJECT_NAME }}/
+          fi
+
+      - name: Create ZIP
+        run: |
+          zip -r \
+            ${{ env.PROJECT_NAME }}-${{ steps.version.outputs.VERSION }}.zip \
+            ${{ env.OUTPUT_PATH }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build-Artifacts
+          path: ${{ env.PROJECT_NAME }}-${{ steps.version.outputs.VERSION }}.zip
+
+  publish:
+    needs: build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Build-Artifacts
+          path: .
+
+      - name: Publish Release
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          artifacts: |
+            CS2-Tags-${{ needs.build.outputs.build_version }}.zip
+          name: "CS2-Tags-${{ needs.build.outputs.build_version }}"
+          tag: "build-${{ needs.build.outputs.build_version }}"
+          body: |
+            Installation
+
+            Extract the archive into:
+
+            addons/counterstrikesharp/plugins
+
+            The plugin will be loaded automatically by CounterStrikeSharp.
+
+            Restart or reload the server after installation.
