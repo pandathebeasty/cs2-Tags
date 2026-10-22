@@ -2,16 +2,6 @@ name: Build and Publish
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - "**/README.md"
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - "**/README.md"
 
 env:
   PROJECT_NAME: "CS2-Tags"
@@ -35,9 +25,11 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Generate Version
+      - name: Get Plugin Version
         id: version
-        run: echo "VERSION=${{ github.run_number }}" >> $GITHUB_OUTPUT
+        run: |
+          VERSION=$(grep "ModuleVersion =>" CS2-Tags.cs | sed -E 's/.*"([^"]+)".*/\1/')
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Restore
         run: dotnet restore ${{ env.PROJECT_PATH }}
@@ -70,19 +62,15 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Build-Artifacts
-          path: ${{ env.PROJECT_NAME }}-${{ steps.version.outputs.VERSION }}.zip
+          path: CS2-Tags-${{ steps.version.outputs.VERSION }}.zip
 
   publish:
     needs: build
-    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions: write-all
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: Build-Artifacts
           path: .
@@ -90,16 +78,16 @@ jobs:
       - name: Publish Release
         uses: ncipollo/release-action@v1.14.0
         with:
-          artifacts: |
-            CS2-Tags-${{ needs.build.outputs.build_version }}.zip
-          name: "CS2-Tags-${{ needs.build.outputs.build_version }}"
-          tag: "build-${{ needs.build.outputs.build_version }}"
+          artifacts: CS2-Tags-${{ needs.build.outputs.build_version }}.zip
+          tag: v${{ needs.build.outputs.build_version }}
+          name: CS2-Tags v${{ needs.build.outputs.build_version }}
+          allowUpdates: true
           body: |
             Installation
 
             Extract the archive into:
 
-            addons/counterstrikesharp/plugins
+            addons/counterstrikesharp/plugins/
 
             The plugin will be loaded automatically by CounterStrikeSharp.
 
